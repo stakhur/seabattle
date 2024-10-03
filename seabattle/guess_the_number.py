@@ -8,6 +8,8 @@ class GuessNumber:
 
         self._target = self.min - 1
 
+        # game state: (Unknown, Missed, Hit, Won, Loose)
+
 
     def new_game(self):
         self.tries = []
@@ -16,8 +18,8 @@ class GuessNumber:
 
     def next_try(self):
         next_try = input('Enter the target: ')
-        while (not isinstance(next_try, int) and
-               (int(next_try) < self.min or int(next_try) > self.max) and
+        while ((not next_try.isdigit()) or
+               (int(next_try) < self.min or int(next_try) > self.max) or
                int(next_try) in self.tries):
             next_try = input('Enter the target: ')
 

@@ -1,3 +1,4 @@
+import copy
 import pytest
 import seabattle.guess_the_number as gtn
 from seabattle.guess_the_number import GuessNumber
@@ -26,19 +27,27 @@ def test_new_game(gn):
 
     assert gn._target >= gn.min and gn._target <= gn.max
 
+def set_input(inp = list()):
+    def input_gen():
+        ret = copy.copy(inp)
+        while ret:
+            yield ret.pop(0)
+    i = input_gen()
+    gtn.input = lambda _: next(i)
+    # TODO: Need to teardown, gtn.input = input
+
 
 def test_next_try(gn):
-    gtn.input = lambda _: '5'
-    gn.next_try()
-    assert len(gn.tries) == 1
-    assert gn.tries[0] == 5
+    set_input(['5', '3', 'Hello', '-1', '5', '13', '7', '0'])
 
-    gtn.input = lambda _: '3'
     gn.next_try()
-    assert len(gn.tries) == 2
+    assert gn.tries == [5]
+
+    gn.next_try()
     assert gn.tries == [5, 3]
     
-    gtn.input = lambda _: '5'
     gn.next_try()
-    assert len(gn.tries) == 2
-    assert gn.tries == [5, 3]
+    assert gn.tries == [5, 3, 7]
+
+    gn.next_try()
+    assert gn.tries == [5, 3, 7, 0]
