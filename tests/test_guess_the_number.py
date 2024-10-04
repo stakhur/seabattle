@@ -1,7 +1,7 @@
 import copy
 import pytest
 import seabattle.guess_the_number as gtn
-from seabattle.guess_the_number import GuessNumber
+from seabattle.guess_the_number import GuessNumber, State
 
 
 @pytest.fixture
@@ -51,3 +51,49 @@ def test_next_try(gn):
 
     gn.next_try()
     assert gn.tries == [5, 3, 7, 0]
+
+
+def test_update_state(gn):
+    assert gn.state == State.UNKNOWN
+
+    target = gn._target
+    first_try = 5 if target != 5 else 6
+
+    state = gn._update_state(first_try)
+    assert state == State.MISSED
+    assert state == gn.state
+
+    state = gn._update_state(target)
+    assert state == State.WON
+    assert state == gn.state
+
+    gn.new_game()
+    assert gn.state == State.UNKNOWN
+
+    gn = GuessNumber(0, 10, 1)
+    gn.new_game()
+    assert gn.state == State.UNKNOWN
+    
+    first_try = 5 if target != 5 else 6
+    state = gn._update_state(first_try)
+    assert state == State.LOST
+    assert state == gn.state
+
+
+
+
+
+
+# def test_loose():
+#     gn = GuessNumber(0, 10, 5)
+#     gn.new_game()
+
+#     target = gn._target
+#     inp = {target, 1, 2, 3, 4, 5, 6, 7}
+#     inp.remove(target)
+#     set_input(list(inp))
+
+#     while gn.next_try() != 'L':
+#         pass
+
+#     assert gn.state == 'L'
