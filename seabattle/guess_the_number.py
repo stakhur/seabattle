@@ -9,13 +9,37 @@ class State(Enum):
 
 class GuessNumber:
     def __init__(self, min, max, max_tries = -1):
-        self.min = int(min)
-        self.max = int(max)
-        self.max_tries = int(max_tries)
+        self._min = int(min)
+        self._max = int(max)
+        self._max_tries = int(max_tries)
 
-        self._target = self.min - 1
+        self._target = self._min - 1
 
         # game states: {(U)nknown, (M)issed, (H)it, (D)estroy, (W)on, (L)ost}
+
+
+    def _set_target_randomly(self):
+        self._target = random.randint(self._min, self._max)
+
+    
+    def _set_target_manually(self):
+        target = input('Enter the target: ')
+        while ((not target.isdigit()) or
+               (int(target) < self._min or int(target) > self._max)):
+            target = input('Enter the target: ')
+
+        self._target = int(target)
+
+
+    def new_game(self, is_random=True):
+        self._clearTries()
+        
+        if is_random:
+            self._set_target_randomly()
+        else:
+            self._set_target_manually()
+
+        self._setState(State.UNKNOWN)
 
 
     def _update_state(self, next_try):
@@ -29,28 +53,23 @@ class GuessNumber:
             self._setState(State.WON)
         elif next_try != self._target:
             self._setState(State.MISSED)
-
+            if self._max_tries > 0 and len(self.tries) >= self._max_tries:
+                self._setState(State.LOST)
 
         return self.state
-
-
-    def new_game(self):
-        self._clearTries()
-        self._target = random.randint(self.min, self.max)
-        self._setState(State.UNKNOWN)
 
 
     def next_try(self):
         next_try = input('Enter the target: ')
         while ((not next_try.isdigit()) or
-               (int(next_try) < self.min or int(next_try) > self.max) or
+               (int(next_try) < self._min or int(next_try) > self._max) or
                int(next_try) in self.tries):
             next_try = input('Enter the target: ')
 
         next_try = int(next_try)
-        self._appendToTries(next_try)
+        # self._appendToTries(next_try)
 
-        # self._update_state(next_try)
+        self._update_state(next_try)
         return self.state
 
 
