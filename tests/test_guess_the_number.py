@@ -117,20 +117,46 @@ def test_update_state(gn):
     assert state == gn.state
 
 
+def test_game_win():
+    min = 0
+    max = 10
+    gn = GuessNumber(min, max)
+
+    set_input([str(i) for i in range(min, max+1)])
+
+    state = gn.game()
+    assert state == State.WON
 
 
+def test_game_loose():
+    min = 0
+    max = 10
+    target = 9
+    gn = GuessNumber(min, max, 5)
+
+    set_input([str(i) for i in range(min, max+1)])
+
+    state = gn.game(set_target_manually=True)
+    assert state == State.LOST
 
 
-# def test_loose():
-#     gn = GuessNumber(0, 10, 5)
-#     gn.new_game()
+def test_get_current_status():
+    min, max = 0, 10
+    target = 5
+    gn = GuessNumber(min, max, 5)
 
-#     target = gn._target
-#     inp = {target, 1, 2, 3, 4, 5, 6, 7}
-#     inp.remove(target)
-#     set_input(list(inp))
+    set_input([str(i) for i in [target, max, min, target, min+1]])
+    gn.new_game(is_random=False)
+    assert gn.get_current_status() == f"Status: State.UNKNOWN\nTries: []"
 
-#     while gn.next_try() != 'L':
-#         pass
+    gn.next_try()
+    assert gn.get_current_status() == f"Status: State.MISSED\nTries: [{max}]"
 
-#     assert gn.state == 'L'
+    gn.next_try()
+    assert gn.get_current_status() == f"Status: State.MISSED\nTries: [{min}, {max}]"
+
+    gn.next_try()
+    assert gn.get_current_status() == f"Status: State.WON\nTries: [{min}, {target}, {max}]"
+
+    gn.next_try()
+    assert gn.get_current_status() == f"Status: State.WON\nTries: [{min}, {target}, {max}]"

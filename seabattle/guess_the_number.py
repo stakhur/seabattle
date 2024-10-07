@@ -17,6 +17,9 @@ class GuessNumber:
 
         # game states: {(U)nknown, (M)issed, (H)it, (D)estroy, (W)on, (L)ost}
 
+    def get_current_status(self):
+        return f"Status: {self.state}\nTries: {sorted(self.tries)}"
+
 
     def _set_target_randomly(self):
         self._target = random.randint(self._min, self._max)
@@ -67,7 +70,6 @@ class GuessNumber:
             next_try = input('Enter the target: ')
 
         next_try = int(next_try)
-        # self._appendToTries(next_try)
 
         self._update_state(next_try)
         return self.state
@@ -89,3 +91,19 @@ class GuessNumber:
 
     def _clearTries(self):
         self._tries = []
+
+
+    def game(self, set_target_manually=False, show_status=False):
+        self.new_game(is_random = not set_target_manually)
+        
+        while(self.state not in (State.WON, State.LOST)):
+            self.next_try()
+            if show_status:
+                print(self.get_current_status())
+
+        return self.state
+    
+
+if __name__ == "__main__":
+    gn = GuessNumber(0, 10, 5)
+    gn.game(show_status=True)
