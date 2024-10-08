@@ -4,8 +4,8 @@ from enum import Enum
 class State(Enum):
     UNKNOWN = 1
     MISSED = 2
-    LOST = 3
-    WON = 4
+    LOSE = 3
+    WIN = 4
 
 class GuessNumber:
     def __init__(self, min, max, max_tries = -1):
@@ -46,18 +46,18 @@ class GuessNumber:
 
 
     def _update_state(self, next_try):
-        if self.state in (State.WON, State.LOST):
+        if self.state in (State.WIN, State.LOSE):
             # The game did not start
             return self.state
         
         self._appendToTries(next_try)
         
         if next_try == self._target:
-            self._setState(State.WON)
+            self._setState(State.WIN)
         elif next_try != self._target:
             self._setState(State.MISSED)
             if self._max_tries > 0 and len(self.tries) >= self._max_tries:
-                self._setState(State.LOST)
+                self._setState(State.LOSE)
 
         return self.state
 
@@ -96,7 +96,7 @@ class GuessNumber:
     def game(self, set_target_manually=False, show_status=False):
         self.new_game(is_random = not set_target_manually)
         
-        while(self.state not in (State.WON, State.LOST)):
+        while(self.state not in (State.WIN, State.LOSE)):
             self.next_try()
             if show_status:
                 print(self.get_current_status())

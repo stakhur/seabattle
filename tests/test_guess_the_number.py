@@ -100,7 +100,7 @@ def test_update_state(gn):
     assert state == gn.state
 
     state = gn._update_state(target)
-    assert state == State.WON
+    assert state == State.WIN
     assert state == gn.state
 
     gn.new_game()
@@ -113,7 +113,7 @@ def test_update_state(gn):
     target = gn._target
     first_try = 5 if target != 5 else 6
     state = gn._update_state(first_try)
-    assert state == State.LOST
+    assert state == State.LOSE
     assert state == gn.state
 
 
@@ -125,7 +125,7 @@ def test_game_win():
     set_input([str(i) for i in range(min, max+1)])
 
     state = gn.game()
-    assert state == State.WON
+    assert state == State.WIN
 
 
 def test_game_loose():
@@ -137,7 +137,7 @@ def test_game_loose():
     set_input([str(i) for i in range(min, max+1)])
 
     state = gn.game(set_target_manually=True)
-    assert state == State.LOST
+    assert state == State.LOSE
 
 
 def test_get_current_status():
@@ -156,7 +156,7 @@ def test_get_current_status():
     assert gn.get_current_status() == f"Status: State.MISSED\nTries: [{min}, {max}]"
 
     gn.next_try()
-    assert gn.get_current_status() == f"Status: State.WON\nTries: [{min}, {target}, {max}]"
+    assert gn.get_current_status() == f"Status: State.WIN\nTries: [{min}, {target}, {max}]"
 
     gn.next_try()
-    assert gn.get_current_status() == f"Status: State.WON\nTries: [{min}, {target}, {max}]"
+    assert gn.get_current_status() == f"Status: State.WIN\nTries: [{min}, {target}, {max}]"
