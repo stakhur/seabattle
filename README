@@ -1,0 +1,86 @@
+Player:
+    setRules
+    prepareToGame (generateTask, manualSetTask)
+    startGame
+    nextTurn (autoTurn, manualTurn)
+    showStat (myTurns, myTask)
+    updateState(next_try)
+    updateOppositeState({(num0,num1,numN):STATE})
+
+Game:
+    Describe / set rules
+    addPlayer
+    startGame:
+        0. players.prepareToGame
+        1. randomly choose the first player. Start game
+        while (player[0] and player[1]) # state not in (WIN, LOSE)
+            2. player[1].updateState(player[0].nextTurn)
+            3. player[0].updateOppositeState(player[1].state)
+            4. if player[1]: # state not (WIN, LOSE)
+                break
+            5. player[0].updateState(player[1].nextTurn)
+            6. player[1].updateOppositeState(player[0].state)
+        7. update score for players
+        8. return who win
+pass
+
+class Rules: #Abstract
+
+    class State(Enum):
+        UNKNOWN = 0
+        LOSE = 1
+        WIN = 2
+        MISSED = 3
+        HIT = 4
+        DESTROYED = 5
+    
+    def getAvailableMovies(self):
+        pass # typle(range(0, 10))
+
+    def getTargetTypes(self):
+        pass # list(tuple(size, num))
+
+
+class Player:
+    def __init__(self, name, rules=None, is_ai=True):
+        self._NAME == name
+        self._movies = []
+        self._last_state = None
+        self._is_ai = is_ai
+        self._rules = rules
+
+    def setRules(self, rules):
+        self._rules = rules
+    
+    def _set_initial_state_randomly(self):
+        # Using rules generate initial state
+        pass
+
+    def _set_initial_state_manually(self):
+        # Using rules set initial state manually
+        pass
+
+    def prepareInitialState(self, is_manually=None):
+        manual_set = not self.is_ai
+        if is_manually != None:
+            manual_set = is_manually
+        
+        return _set_initial_state_manually() if manual_set else self._set_initial_state_randomly()
+
+    def _get_next_move_randomly(self):
+        # Using rules generate next move
+        pass
+
+    def _get_next_move_manually(self):
+        # Using rules set next move
+        pass
+
+    def get_next_move(self, is_manually=None):
+        manual_get = not self.is_ai
+        if is_manually != None:
+            manual_get = is_manually
+
+        return self._get_next_move_manually() if manual_get else self._get_next_move_randomly()
+    
+
+    

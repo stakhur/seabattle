@@ -70,6 +70,29 @@ def test_new_game_manual_target():
     assert g._target == target
 
 
+def test_next_try_manual():
+    min = 0
+    max = 10
+    g = GuessNumber(min, max)
+
+    set_input([str(min - 1), '1', str(max + 1), '2', 'Hello', '5'])
+    g.new_game(is_random=True)
+
+    assert g._next_try_manual() == 1
+    assert g._next_try_manual() == 2
+    assert g._next_try_manual() == 5
+
+
+def test_next_try_random():
+    min = 0
+    max = 10
+    g = GuessNumber(min, max)
+    g.new_game(is_random=True)
+    
+    for _ in range(10):
+        assert g._next_try_random() in range(min, max+1)
+
+
 def test_next_try(gn):
     set_input(['4'])
     gn.new_game(False)

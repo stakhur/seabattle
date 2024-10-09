@@ -62,14 +62,26 @@ class GuessNumber:
         return self.state
 
 
-    def next_try(self):
+    def _next_try_random(self):
+        next_try = self._min - 1
+        while next_try < self._min or next_try > self._max or next_try in self.tries:
+            next_try = random.randint(self._min, self._max)
+
+        return next_try
+
+
+    def _next_try_manual(self):
         next_try = input('Enter the target: ')
         while ((not next_try.isdigit()) or
                (int(next_try) < self._min or int(next_try) > self._max) or
                int(next_try) in self.tries):
             next_try = input('Enter the target: ')
+        
+        return int(next_try)
 
-        next_try = int(next_try)
+
+    def next_try(self, is_random=True):
+        next_try = self._next_try_manual()
 
         self._update_state(next_try)
         return self.state
