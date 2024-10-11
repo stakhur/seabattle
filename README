@@ -1,8 +1,7 @@
 Player:
-    setRules
+    readRules(rules)
     prepareToGame (generateTask, manualSetTask)
-    startGame
-    nextTurn (autoTurn, manualTurn)
+    makeTurn (autoTurn, manualTurn)
     showStat (myTurns, myTask)
     updateState(next_try)
     updateOppositeState({(num0,num1,numN):STATE})
@@ -14,11 +13,11 @@ Game:
         0. players.prepareToGame
         1. randomly choose the first player. Start game
         while (player[0] and player[1]) # state not in (WIN, LOSE)
-            2. player[1].updateState(player[0].nextTurn)
+            2. player[1].updateState(player[0].makeTurn)
             3. player[0].updateOppositeState(player[1].state)
             4. if player[1]: # state not (WIN, LOSE)
                 break
-            5. player[0].updateState(player[1].nextTurn)
+            5. player[0].updateState(player[1].makeTurn)
             6. player[1].updateOppositeState(player[0].state)
         7. update score for players
         8. return who win
@@ -49,7 +48,7 @@ class Player:
         self._is_ai = is_ai
         self._rules = rules
 
-    def setRules(self, rules):
+    def read_rules(self, rules):
         self._rules = rules
     
     def _set_initial_state_randomly(self):
@@ -60,7 +59,7 @@ class Player:
         # Using rules set initial state manually
         pass
 
-    def prepareInitialState(self, is_manually=None):
+    def prepare_to_game(self, is_manually=None):
         manual_set = not self.is_ai
         if is_manually != None:
             manual_set = is_manually
@@ -75,7 +74,7 @@ class Player:
         # Using rules set next move
         pass
 
-    def get_next_move(self, is_manually=None):
+    def make_turn(self, is_manually=None):
         manual_get = not self.is_ai
         if is_manually != None:
             manual_get = is_manually
