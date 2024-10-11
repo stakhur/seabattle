@@ -1,4 +1,5 @@
 Player:
+    Status(Idle, NotKnowRules, NotReady, ReadyToGame, MakingTurn, Waiting)
     readRules(rules)
     prepareToGame (generateTask, manualSetTask)
     makeTurn (autoTurn, manualTurn)
