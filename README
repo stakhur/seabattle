@@ -1,13 +1,16 @@
-Player:
+class Rules:
+    get_field_limitations()
+
+
+class Player:
     Status(Idle, NotKnowRules, NotReady, ReadyToGame, MakingTurn, Waiting)
-    readRules(rules)
-    prepareToGame (generateTask, manualSetTask)
+    prepareToGame (rules, generateTask, manualSetTask)
     makeTurn (autoTurn, manualTurn)
     showStat (myTurns, myTask)
     updateState(next_try)
     updateOppositeState({(num0,num1,numN):STATE})
 
-Game:
+class Game:
     Describe / set rules
     addPlayer
     startGame:
