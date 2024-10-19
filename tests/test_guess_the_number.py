@@ -1,7 +1,9 @@
-import copy
+# import copy
 import pytest
-import seabattle.guess_the_number as gtn
+# import seabattle.guess_the_number as gtn
 from seabattle.guess_the_number import GuessNumber, State
+
+from helpers import InputReplacer as IR
 
 
 @pytest.fixture
@@ -22,16 +24,6 @@ def test_constructor():
     assert g._target == min - 1
 
 
-def set_input(inp = list()):
-    def input_gen():
-        ret = copy.copy(inp)
-        while ret:
-            yield ret.pop(0)
-    i = input_gen()
-    gtn.input = lambda _: next(i)
-    # TODO: Need to teardown, gtn.input = input
-
-
 def test_set_target_randomly():
     min = 0
     g = GuessNumber(min, 10, 5)
@@ -48,9 +40,9 @@ def test_set_target_manually():
     assert g._target == min - 1
 
     target = 3
-    set_input([str(min - 1), str(max + 1), 'Hello', str(target), '5'])
-    g._set_target_manually()
-    assert g._target == target
+    with IR([str(min - 1), str(max + 1), 'Hello', str(target), '5']) as _:
+        g._set_target_manually()
+        assert g._target == target
 
 
 def test_new_game_random_target(gn):    
@@ -65,9 +57,9 @@ def test_new_game_manual_target():
     g = GuessNumber(min, max)
 
     target = 3
-    set_input([str(min - 1), str(max + 1), 'Hello', str(target), '5'])
-    g.new_game(is_random=False)
-    assert g._target == target
+    with IR([str(min - 1), str(max + 1), 'Hello', str(target), '5']) as _:
+        g.new_game(is_random=False)
+        assert g._target == target
 
 
 def test_next_try_manual():
@@ -75,12 +67,12 @@ def test_next_try_manual():
     max = 10
     g = GuessNumber(min, max)
 
-    set_input([str(min - 1), '1', str(max + 1), '2', 'Hello', '5'])
-    g.new_game(is_random=True)
+    with IR([str(min - 1), '1', str(max + 1), '2', 'Hello', '5']) as _:
+        g.new_game(is_random=True)
 
-    assert g._next_try_manual() == 1
-    assert g._next_try_manual() == 2
-    assert g._next_try_manual() == 5
+        assert g._next_try_manual() == 1
+        assert g._next_try_manual() == 2
+        assert g._next_try_manual() == 5
 
 
 def test_next_try_random():
@@ -94,22 +86,21 @@ def test_next_try_random():
 
 
 def test_next_try(gn):
-    set_input(['4'])
-    gn.new_game(False)
+    with IR(['4']) as _:
+        gn.new_game(False)
 
-    set_input(['5', '3', 'Hello', '-1', '5', '13', '7', '0'])
+    with IR(['5', '3', 'Hello', '-1', '5', '13', '7', '0']) as _:    
+        gn.next_try()
+        assert gn.tries == [5]
 
-    gn.next_try()
-    assert gn.tries == [5]
+        gn.next_try()
+        assert gn.tries == [5, 3]
+        
+        gn.next_try()
+        assert gn.tries == [5, 3, 7]
 
-    gn.next_try()
-    assert gn.tries == [5, 3]
-    
-    gn.next_try()
-    assert gn.tries == [5, 3, 7]
-
-    gn.next_try()
-    assert gn.tries == [5, 3, 7, 0]
+        gn.next_try()
+        assert gn.tries == [5, 3, 7, 0]
 
 
 def test_update_state(gn):
@@ -145,10 +136,9 @@ def test_game_win():
     max = 10
     gn = GuessNumber(min, max)
 
-    set_input([str(i) for i in range(min, max+1)])
-
-    state = gn.game()
-    assert state == State.WIN
+    with IR([str(i) for i in range(min, max+1)]) as _:
+        state = gn.game()
+        assert state == State.WIN
 
 
 def test_game_loose():
@@ -157,10 +147,9 @@ def test_game_loose():
     target = 9
     gn = GuessNumber(min, max, 5)
 
-    set_input([str(i) for i in range(min, max+1)])
-
-    state = gn.game(set_target_manually=True)
-    assert state == State.LOSE
+    with IR([str(i) for i in range(min, max+1)]) as _:
+        state = gn.game(set_target_manually=True)
+        assert state == State.LOSE
 
 
 def test_get_current_status():
@@ -168,18 +157,18 @@ def test_get_current_status():
     target = 5
     gn = GuessNumber(min, max, 5)
 
-    set_input([str(i) for i in [target, max, min, target, min+1]])
-    gn.new_game(is_random=False)
-    assert gn.get_current_status() == f"Status: State.UNKNOWN\nTries: []"
+    with IR([str(i) for i in [target, max, min, target, min+1]]) as _:
+        gn.new_game(is_random=False)
+        assert gn.get_current_status() == f"Status: State.UNKNOWN\nTries: []"
 
-    gn.next_try()
-    assert gn.get_current_status() == f"Status: State.MISSED\nTries: [{max}]"
+        gn.next_try()
+        assert gn.get_current_status() == f"Status: State.MISSED\nTries: [{max}]"
 
-    gn.next_try()
-    assert gn.get_current_status() == f"Status: State.MISSED\nTries: [{min}, {max}]"
+        gn.next_try()
+        assert gn.get_current_status() == f"Status: State.MISSED\nTries: [{min}, {max}]"
 
-    gn.next_try()
-    assert gn.get_current_status() == f"Status: State.WIN\nTries: [{min}, {target}, {max}]"
+        gn.next_try()
+        assert gn.get_current_status() == f"Status: State.WIN\nTries: [{min}, {target}, {max}]"
 
-    gn.next_try()
-    assert gn.get_current_status() == f"Status: State.WIN\nTries: [{min}, {target}, {max}]"
+        gn.next_try()
+        assert gn.get_current_status() == f"Status: State.WIN\nTries: [{min}, {target}, {max}]"

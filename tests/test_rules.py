@@ -14,19 +14,6 @@ def test_rule(rule):
     assert rule._limits == dict()
 
 
-def test_set_limits(rule):
-    limit_min = "min"
-    value = 1
-    rule.set_limit(limit_min, value)
-    assert limit_min in rule.limits
-    assert rule.limits[limit_min] == value
-
-    limit_max = "max"
-    value = 10
-    rule.set_limit(limit_max, value)
-    assert set(rule.limits.keys()) == {limit_min, limit_max}
-
-
 def test_initial_limits():
     lmin = "min"
     lmax = "max"
@@ -36,15 +23,41 @@ def test_initial_limits():
     }
 
     rule = Rules(limits)
-    assert len(rule.LIMITS) == 2
-    assert lmin in rule.LIMITS
-    assert lmax in rule.LIMITS
+    assert len(rule.AVAILABLE_LIMITS) == 2
+    assert lmin in rule.AVAILABLE_LIMITS
+    assert lmax in rule.AVAILABLE_LIMITS
+    assert len(rule.limits) == 2
+
+
+def test_change_limits():
+    lmin = "min"
+    lmax = "max"
+
+    rule = Rules({
+        lmin: 0,
+        lmax: 5,
+    })
+    
+    value = 1
+    rule.change_limit(lmin, value)
+    assert lmin in rule.limits
+    assert rule.limits[lmin] == value
+
+    value = 10
+    rule.change_limit(lmax, value)
+    assert set(rule.limits.keys()) == {lmin, lmax}
+
+
+def test_adding_new_limit():
+    rule = Rules({
+        "min": 0,
+        "max": 10,
+    })
 
     new_limit = "new"
-    rule.set_limit(new_limit, "Hello")
-    assert len(rule.LIMITS) == 2
-    assert lmin in rule.LIMITS
-    assert lmax in rule.LIMITS
+    rule.change_limit(new_limit, "Hello")
+    assert len(rule.AVAILABLE_LIMITS) == 2
+    assert new_limit not in rule.limits
 
 
 def test_make_preparations(rule):

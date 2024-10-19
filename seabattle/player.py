@@ -1,3 +1,5 @@
+from rules import Rules
+
 class Player:
     
     def __init__(self, name, ai=False):
@@ -10,7 +12,7 @@ class Player:
         return self._name
     
 
-    def set_rules(self, rules):
+    def set_rules(self, rules: Rules):
         self._rules = rules
 
     
