@@ -1,10 +1,11 @@
 # import copy
 import pytest
-# import seabattle.guess_the_number as gtn
+import seabattle.guess_the_number as gtn
 from seabattle.guess_the_number import GuessNumber, State
 
 from helpers import InputReplacer as IR
 
+IR.set_module(gtn)
 
 @pytest.fixture
 def gn():

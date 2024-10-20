@@ -1,4 +1,4 @@
-from rules import Rules
+from .rules import Rules
 
 class Player:
     
@@ -6,6 +6,7 @@ class Player:
         self._name = name
         self._ai = ai
         self._rules = None
+        self._turns = []
 
     @property
     def name(self):
@@ -17,4 +18,8 @@ class Player:
 
     
     def prepare_to_game(self):
-        pass
+        self._rules.make_preparations()
+
+
+    def make_turn(self):
+        self._turns.append(self._rules.make_turn())

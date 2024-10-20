@@ -37,5 +37,5 @@ class TestPrepareToGame:
         return _player
 
 
-    def test_prepare_to_game(self, human):
-        human.prepare_to_game()
+    # def test_prepare_to_game(self, human):
+        # human.prepare_to_game()

@@ -1,17 +1,24 @@
 import copy
-import seabattle.guess_the_number as gtn
 
 
 class InputReplacer:
-    def __init__(self, inp: list):
+    _module = None
+
+    def __init__(self, inp: list, module = None):
         self._inputs = copy.copy(inp)
+
+        if (module != None):
+            InputReplacer._module = module
 
     def __enter__(self):
         self._set_input()
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
-        gtn.input = input
+        InputReplacer._module.input = input
 
+    @classmethod
+    def set_module(cls,  module):
+        cls._module = module
 
     def _set_input(self):
         def input_gen():
@@ -19,4 +26,4 @@ class InputReplacer:
             while ret:
                 yield ret.pop(0)
         i = input_gen()
-        gtn.input = lambda _: next(i)
+        InputReplacer._module.input = lambda _: next(i)

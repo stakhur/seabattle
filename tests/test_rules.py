@@ -1,6 +1,6 @@
 import pytest
 
-from seabattle.rules import Rules
+from seabattle.rules import Rules, State
 
 
 @pytest.fixture
@@ -11,22 +11,26 @@ def rule():
 
 def test_rule(rule):
     assert isinstance(rule, Rules)
-    assert rule._limits == dict()
+    assert rule._limits == {"players": 1}
+    assert rule.state == State.NOT_READY_FOR_GAME
 
 
 def test_initial_limits():
     lmin = "min"
     lmax = "max"
+    p = "players"
     limits = {
         lmin: 0,
         lmax: 10,
+        p: 2
     }
 
     rule = Rules(limits)
-    assert len(rule.AVAILABLE_LIMITS) == 2
+    assert len(rule.AVAILABLE_LIMITS) == 3
     assert lmin in rule.AVAILABLE_LIMITS
     assert lmax in rule.AVAILABLE_LIMITS
-    assert len(rule.limits) == 2
+    assert p in rule.AVAILABLE_LIMITS
+    assert len(rule.limits) == 3
 
 
 def test_change_limits():
@@ -45,7 +49,7 @@ def test_change_limits():
 
     value = 10
     rule.change_limit(lmax, value)
-    assert set(rule.limits.keys()) == {lmin, lmax}
+    assert set(rule.limits.keys()) == {lmin, lmax, "players"}
 
 
 def test_adding_new_limit():
@@ -56,13 +60,15 @@ def test_adding_new_limit():
 
     new_limit = "new"
     rule.change_limit(new_limit, "Hello")
-    assert len(rule.AVAILABLE_LIMITS) == 2
+    assert len(rule.AVAILABLE_LIMITS) == 3
     assert new_limit not in rule.limits
 
 
 def test_make_preparations(rule):
     rule.make_preparations()
+    assert rule.state == State.READY_FOR_GAME
 
 
 def test_make_turn(rule):
     rule.make_turn()
+    assert rule.state == State.TURN_COMPLETED
