@@ -83,3 +83,13 @@ def test_add_player_change_rule(game_with_3_players):
     assert game_with_3_players.state == Game.State.READY_FOR_START
     assert game_with_3_players._min_num_of_players == 2
     assert len(game_with_3_players._players) == 2
+
+
+    class RulesWith4Players(Rules):
+        def __init__(self):
+            super().__init__(limits={"players": 4,})
+
+    game_with_3_players.change_rules(RulesWith4Players())
+    assert game_with_3_players.state == Game.State.WAITING_FOR_PLAYERS
+    assert game_with_3_players._min_num_of_players == 4
+    assert len(game_with_3_players._players) == 2

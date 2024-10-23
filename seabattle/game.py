@@ -22,11 +22,14 @@ class Game:
         if (len(self._players) > self._max_num_of_players):
             self._players = self._players[:self._max_num_of_players]
 
+        if (len(self._players) < self._min_num_of_players):
+            self._state = self.State.WAITING_FOR_PLAYERS
+
 
     def add_player(self, player: Player):
         is_player_added = False
 
-        if (len(self._players) < self._min_num_of_players):
+        if (len(self._players) < self._max_num_of_players):
             self._players.append(player)
             is_player_added = True
 
