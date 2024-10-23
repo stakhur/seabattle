@@ -62,16 +62,16 @@ def test_add_player(game):
     is_added = game.add_player(Player("Tusik"))
     assert is_added == True
     assert len(game._players) == 3
-    assert game.state == Game.State.READY_FOR_START
+    assert game.state == Game.State.WAITING_FOR_PLAYERS_READY
 
     is_added = game.add_player(Player("Valera"))
     assert is_added == False
     assert len(game._players) == 3
-    assert game.state == Game.State.READY_FOR_START
+    assert game.state == Game.State.WAITING_FOR_PLAYERS_READY
 
 
 def test_add_player_change_rule(game_with_3_players):
-    assert game_with_3_players.state == Game.State.READY_FOR_START
+    assert game_with_3_players.state == Game.State.WAITING_FOR_PLAYERS_READY
     assert game_with_3_players._min_num_of_players == 3
     assert len(game_with_3_players._players) == 3
 
@@ -80,7 +80,7 @@ def test_add_player_change_rule(game_with_3_players):
             super().__init__(limits={"players": 2,})
 
     game_with_3_players.change_rules(RulesWith2Players())
-    assert game_with_3_players.state == Game.State.READY_FOR_START
+    assert game_with_3_players.state == Game.State.WAITING_FOR_PLAYERS_READY
     assert game_with_3_players._min_num_of_players == 2
     assert len(game_with_3_players._players) == 2
 
@@ -93,3 +93,16 @@ def test_add_player_change_rule(game_with_3_players):
     assert game_with_3_players.state == Game.State.WAITING_FOR_PLAYERS
     assert game_with_3_players._min_num_of_players == 4
     assert len(game_with_3_players._players) == 2
+
+    game_with_3_players.add_player(Player("Tusik"))
+    game_with_3_players.add_player(Player("Valera"))
+    assert game_with_3_players.state == Game.State.WAITING_FOR_PLAYERS_READY
+    assert game_with_3_players._min_num_of_players == 4
+    assert len(game_with_3_players._players) == 4
+
+
+def test_prepare_players(game_with_3_players):
+    assert game_with_3_players.state == Game.State.WAITING_FOR_PLAYERS_READY
+    game_with_3_players.prepare_players()
+    assert game_with_3_players.state == Game.State.READY_FOR_GAME
+    # check the prepare of the players

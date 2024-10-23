@@ -15,7 +15,7 @@ def rule():
 
 def test_rule(rule):
     assert isinstance(rule, GuessTheNumberRules)
-    assert len(rule.AVAILABLE_LIMITS) == 3
+    assert len(rule.AVAILABLE_LIMITS) == 5
 
 
 def test_set_target(rule):

@@ -7,7 +7,8 @@ from .player import Player
 class Game:
     class State(Enum):
         WAITING_FOR_PLAYERS = 2
-        READY_FOR_START = 3
+        WAITING_FOR_PLAYERS_READY = 3
+        READY_FOR_GAME = 4
 
     def __init__(self, rules: Rules):
         self._players = []
@@ -34,10 +35,13 @@ class Game:
             is_player_added = True
 
         if (len(self._players) >= self._min_num_of_players):
-            self._state = self.State.READY_FOR_START
+            self._state = self.State.WAITING_FOR_PLAYERS_READY
 
         return is_player_added
 
+
+    def prepare_players(self):
+        self._state = self.State.READY_FOR_GAME
 
     @property
     def state(self):
