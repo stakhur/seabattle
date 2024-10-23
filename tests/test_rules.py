@@ -11,7 +11,7 @@ def rule():
 
 def test_rule(rule):
     assert isinstance(rule, Rules)
-    assert rule._limits == {"players": 1}
+    assert rule._limits == {"players": 1, "min_players": 1, "max_players": 1}
     assert rule.state == State.NOT_READY_FOR_GAME
 
 
@@ -26,11 +26,11 @@ def test_initial_limits():
     }
 
     rule = Rules(limits)
-    assert len(rule.AVAILABLE_LIMITS) == 3
+    assert len(rule.AVAILABLE_LIMITS) == 5
     assert lmin in rule.AVAILABLE_LIMITS
     assert lmax in rule.AVAILABLE_LIMITS
     assert p in rule.AVAILABLE_LIMITS
-    assert len(rule.limits) == 3
+    assert len(rule.limits) == 5
 
 
 def test_change_limits():
@@ -49,7 +49,7 @@ def test_change_limits():
 
     value = 10
     rule.change_limit(lmax, value)
-    assert set(rule.limits.keys()) == {lmin, lmax, "players"}
+    assert set(rule.limits.keys()) == {lmin, lmax, "players", "min_players", "max_players"}
 
 
 def test_adding_new_limit():
@@ -60,7 +60,7 @@ def test_adding_new_limit():
 
     new_limit = "new"
     rule.change_limit(new_limit, "Hello")
-    assert len(rule.AVAILABLE_LIMITS) == 3
+    assert len(rule.AVAILABLE_LIMITS) == 5
     assert new_limit not in rule.limits
 
 

@@ -18,6 +18,10 @@ class Rules:
         self._limits = limits
         if "players" not in limits:
             self._limits["players"] = 1
+        if "min_players" not in limits:
+            self._limits["min_players"] = self._limits["players"]
+        if "max_players" not in limits:
+            self._limits["max_players"] = self._limits["players"]
 
 
     @property
