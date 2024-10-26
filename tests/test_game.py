@@ -23,6 +23,7 @@ def game_with_3_players():
 # change_rules
 # test_add_player
 # test_prepare_players
+
 # test_start_game
 # test_next_turn
 # test_check_state
@@ -94,6 +95,11 @@ def test_add_player_change_rule(game_with_3_players):
     assert game_with_3_players._min_num_of_players == 4
     assert len(game_with_3_players._players) == 2
 
+    game_with_3_players.change_rules(RulesWith2Players())
+    assert game_with_3_players.state == Game.State.WAITING_FOR_PLAYERS_READY
+
+    game_with_3_players.change_rules(RulesWith4Players())
+
     game_with_3_players.add_player(Player("Tusik"))
     game_with_3_players.add_player(Player("Valera"))
     assert game_with_3_players.state == Game.State.WAITING_FOR_PLAYERS_READY
@@ -101,8 +107,47 @@ def test_add_player_change_rule(game_with_3_players):
     assert len(game_with_3_players._players) == 4
 
 
+def test_rule_set_to_new_player(game):
+    assert len(game._players) == 0
+    player = Player("Jurek")
+    assert player._rules == None
+    
+    game.add_player(player)
+    assert player._rules != None
+
+
+def test_rule_set_to_new_player_after_change(game_with_3_players):
+    player = game_with_3_players._players[0]
+    assert player._rules.limits["players"] == 3
+
+    class RulesWith4Players(Rules):
+        def __init__(self):
+            super().__init__(limits={"players": 4,})
+
+    game_with_3_players.change_rules(RulesWith4Players())
+    assert player._rules.limits["players"] == 4
+
+
 def test_prepare_players(game_with_3_players):
-    assert game_with_3_players.state == Game.State.WAITING_FOR_PLAYERS_READY
-    game_with_3_players.prepare_players()
-    assert game_with_3_players.state == Game.State.READY_FOR_GAME
-    # check the prepare of the players
+    game = game_with_3_players
+    assert game.state == Game.State.WAITING_FOR_PLAYERS_READY
+
+    game.prepare_players()
+    assert game.state == Game.State.READY_FOR_GAME
+
+    for player in game._players:
+        assert player._state == Player.State.READY_TO_START
+
+    class RulesWith2Players(Rules):
+        def __init__(self):
+            super().__init__(limits={"players": 2,})
+    
+    game.change_rules(RulesWith2Players())
+    assert game.state == Game.State.WAITING_FOR_PLAYERS_READY
+
+    game.prepare_players()
+    assert game.state == Game.State.READY_FOR_GAME
+    
+
+def test_make_turn():
+    pass

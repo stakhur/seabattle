@@ -45,6 +45,7 @@ class GuessTheNumberRules(Rules):
                 return
 
         self._set_target(int(target))
+        return self.target
 
 
     def _last_turn(self, next_try):

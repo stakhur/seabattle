@@ -25,12 +25,18 @@ class Game:
 
         if (len(self._players) < self._min_num_of_players):
             self._state = self.State.WAITING_FOR_PLAYERS
+        else:
+            self._state = self.State.WAITING_FOR_PLAYERS_READY
+
+        for player in self._players:
+            player.set_rules(self._rules)
 
 
     def add_player(self, player: Player):
         is_player_added = False
 
         if (len(self._players) < self._max_num_of_players):
+            player.set_rules(self._rules)
             self._players.append(player)
             is_player_added = True
 
@@ -41,6 +47,9 @@ class Game:
 
 
     def prepare_players(self):
+        for player in self._players:
+            player.prepare_to_game()
+            
         self._state = self.State.READY_FOR_GAME
 
     @property
