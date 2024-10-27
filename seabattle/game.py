@@ -9,14 +9,17 @@ class Game:
         WAITING_FOR_PLAYERS = 2
         WAITING_FOR_PLAYERS_READY = 3
         READY_FOR_GAME = 4
+        GAME_IN_PROGRESS = 5
 
     def __init__(self, rules: Rules):
         self._players = []
-        self.change_rules(rules)
         self._state = self.State.WAITING_FOR_PLAYERS
+        self.change_rules(rules)
 
     
     def change_rules(self, rules: Rules):
+        assert self._state != self.State.GAME_IN_PROGRESS, "Cannot change the rules. Game is in progress!"
+
         self._rules = rules
         self._min_num_of_players = rules.limits["min_players"]
         self._max_num_of_players = rules.limits["max_players"]
@@ -33,6 +36,8 @@ class Game:
 
 
     def add_player(self, player: Player):
+        assert self._state != self.State.GAME_IN_PROGRESS, "Cannot add player. Game is in progress!"
+
         is_player_added = False
 
         if (len(self._players) < self._max_num_of_players):
@@ -47,10 +52,29 @@ class Game:
 
 
     def prepare_players(self):
+        assert self._state == self.State.WAITING_FOR_PLAYERS_READY, "Cannot prepare the players. "
+
         for player in self._players:
             player.prepare_to_game()
-            
+
         self._state = self.State.READY_FOR_GAME
+
+
+    def start(self):
+        assert self._state == self.State.READY_FOR_GAME, "Cannot start the game. Players are not ready!"
+
+        for player in self._players:
+            player.start_game()
+
+        self._state = self.State.GAME_IN_PROGRESS
+
+
+    def loop(self):
+        # current_player = next_player()
+        # turn = current_player.make_turn()
+        # 
+        pass
+
 
     @property
     def state(self):

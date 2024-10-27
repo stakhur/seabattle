@@ -1,8 +1,11 @@
 import pytest
 
 from seabattle.rules import Rules
+from seabattle.guess_the_number_rules import GuessTheNumberRules
 from seabattle.game import Game
+
 from seabattle.player import Player
+from seabattle.player_ai_guess_the_number import AiGuessTheNumber
 
 @pytest.fixture
 def game():
@@ -149,5 +152,49 @@ def test_prepare_players(game_with_3_players):
     assert game.state == Game.State.READY_FOR_GAME
     
 
-def test_make_turn():
+def test_start_game():
+    game = Game(GuessTheNumberRules())
+    game.add_player(AiGuessTheNumber("Bob"))
+    assert game.state == Game.State.WAITING_FOR_PLAYERS
+
+    with pytest.raises(AssertionError) as _:
+        game.start()
+    assert game.state == Game.State.WAITING_FOR_PLAYERS
+
+    with pytest.raises(AssertionError) as _:
+        game.prepare_players()
+    assert game.state == Game.State.WAITING_FOR_PLAYERS
+
+    game.add_player(AiGuessTheNumber("Rob"))
+    assert game.state == Game.State.WAITING_FOR_PLAYERS_READY
+
+    game.prepare_players()
+    assert game.state == Game.State.READY_FOR_GAME
+
+    game.start()
+    assert game.state == Game.State.GAME_IN_PROGRESS
+
+    with pytest.raises(AssertionError) as _:
+        game.change_rules(Rules({}))
+
+    with pytest.raises(AssertionError) as _:
+        game.add_player(AiGuessTheNumber("Lob"))
+
+    with pytest.raises(AssertionError) as _:
+        game.prepare_players()
+
+    for player in game._players:
+        assert player.state == Player.State.IN_GAME
+    
+
+    # game.
+
+
+    # game.start()
+
+    # for player in game._players:
+    #     assert len(player._turns) == 0
+
+
+def test_next_turn():
     pass

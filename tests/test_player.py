@@ -52,3 +52,22 @@ class TestPrepareToGame:
         
         player.prepare_to_game()
         assert player.state == Player.State.READY_TO_START
+
+def test_start_game():
+    player = Ai("AI")
+
+    with pytest.raises(AssertionError) as _:
+        player.start_game()
+
+    player.set_rules(Rules())
+
+    with pytest.raises(AssertionError) as _:
+        player.start_game()
+
+    player.prepare_to_game()
+    
+    player.start_game()
+    assert player.state == Player.State.IN_GAME
+
+    with pytest.raises(AssertionError) as _:
+        player.start_game()

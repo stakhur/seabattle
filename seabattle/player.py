@@ -8,6 +8,7 @@ class Player:
         WAITING_FOR_RULES = 1
         READY_TO_PREPARE = 2
         READY_TO_START = 3
+        IN_GAME = 4
     
     def __init__(self, name, ai=False):
         self._name = name
@@ -47,6 +48,12 @@ class Player:
         
         self._mydata = self._rules.make_preparations(target=inp)
         self._state = self.State.READY_TO_START
+
+
+    def start_game(self):
+        assert self._state == self.State.READY_TO_START, "Player must be ready to start"
+
+        self._state = self.State.IN_GAME
 
 
     def make_turn(self):
