@@ -173,6 +173,7 @@ def test_start_game():
 
     game.start()
     assert game.state == Game.State.GAME_IN_PROGRESS
+    assert game._players_queue == game._players
 
     with pytest.raises(AssertionError) as _:
         game.change_rules(Rules({}))
@@ -185,6 +186,7 @@ def test_start_game():
 
     for player in game._players:
         assert player.state == Player.State.IN_GAME
+
     
 
     # game.

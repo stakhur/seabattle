@@ -1,5 +1,7 @@
 from enum import Enum
 
+import copy
+
 from .rules import Rules, State
 from .guess_the_number_rules import GuessTheNumberRules
 from .player import Player
@@ -66,13 +68,20 @@ class Game:
         for player in self._players:
             player.start_game()
 
+        self._players_queue = copy.copy(self._players)
+
         self._state = self.State.GAME_IN_PROGRESS
 
 
     def loop(self):
         # current_player = next_player()
+        # state = TURN_AGAIN
+        # while state == TURN_AGAIN:
         # turn = current_player.make_turn()
+        # result, state = next_player.check(turn)
+        # current_player.update(result)
         # 
+        # TURN_AGAIN, NEXT_PLAYER_TURN, LOSE
         pass
 
 
